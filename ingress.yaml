@@ -1,0 +1,158 @@
+# POD Database
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sejutacita-db
+  labels:
+    app: sejutacita-db
+spec:
+  containers:
+    - name: sejutacita-db
+      image: postgres
+      ports:
+        - containerPort: 5432
+      env:
+        - name: POSTGRES_PASSWORD
+          value: "root"
+
+---
+
+# Service Database
+apiVersion: v1
+kind: Service
+metadata:
+  name: sejutacita-db-service
+spec:
+    selector:
+        app: sejutacita-db
+    ports:
+      - port: 5432
+        targetPort: 5432
+
+---
+
+# Auth Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: auth-pod
+  labels:
+    app: auth-pod
+spec:
+    containers:
+      - name: auth-container
+        image: rizface/sejutacita-auth:testing
+        ports:
+          - containerPort: 9001
+        env:
+          - name: DBHOST
+            value: "sejutacita-db-service.default.svc.cluster.local"
+          - name: DBPORT
+            value: "5432"
+          - name: DBUSER
+            value: "postgres"
+          - name: DBPASSWORD
+            value: "root"
+          - name: DBNAME
+            value: "sejutacita"
+          - name: DBSSLMODE
+            value: "disable"
+          - name: DBTIMEZONE
+            value: "Asia/Jakarta"
+          - name: JWT_SECRET
+            value: "_secret_"
+
+---
+
+# Auth Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-pod
+  ports:
+    - port: 9001
+      targetPort: 9001
+
+---
+
+# CRUD Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: crud-pod
+  labels:
+    app: crud-pod
+spec:
+  containers:
+    - name: crud-container
+      image: rizface/sejutacita-crud:testing
+      ports:
+        - containerPort: 9002
+      env:
+        - name: DBHOST
+          value: "sejutacita-db-service.default.svc.cluster.local"
+        - name: DBPORT
+          value: "5432"
+        - name: DBUSER
+          value: "postgres"
+        - name: DBPASSWORD
+          value: "root"
+        - name: DBNAME
+          value: "sejutacita"
+        - name: DBSSLMODE
+          value: "disable"
+        - name: DBTIMEZONE
+          value: "Asia/Jakarta"
+        - name: JWT_SECRET
+          value: "_secret_"
+
+---
+
+# CRUD Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: crud-service
+spec:
+  selector:
+    app: crud-pod
+  ports:
+    - port: 9002
+      targetPort: 9002
+
+---
+
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sejutacita-ingress
+spec:
+  rules:
+    - host: fariz.test.local
+      http:
+        paths:
+          - path: /login
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 9001
+          - path: /users
+            pathType: Prefix
+            backend:
+              service:
+                name: crud-service
+                port:
+                  number: 9002
+          - path: /profile
+            pathType: Prefix
+            backend:
+              service:
+                name: crud-service
+                port:
+                  number: 9002

@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  sejutacita-db:
+    container_name: sejutacita-db
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "root"
+
+  sejutacita-auth:
+    container_name: sejutacita-auth
+    image: rizface/sejutacita-auth:testing
+    depends_on:
+      - sejutacita-db
+    ports:
+      - "9001:9001"
+    environment:
+      DBHOST: sejutacita-db
+      DBPORT: "5432"
+      DBUSER: "postgres"
+      DBPASSWORD: "root"
+      DBNAME: "sejutacita"
+      DBSSLMODE: "disable"
+      DBTIMEZONE: "Asia/Jakarta"
+      JWT_SECRET: "_secret_"
+
+  sejutacita-crud:
+    container_name: sejutacita-crud
+    image: rizface/sejutacita-crud:testing
+    depends_on:
+      - sejutacita-db
+    ports:
+      - "9002:9002"
+    environment:
+      DBHOST: sejutacita-db
+      DBPORT: "5432"
+      DBUSER: "postgres"
+      DBPASSWORD: "root"
+      DBNAME: "sejutacita"
+      DBSSLMODE: "disable"
+      DBTIMEZONE: "Asia/Jakarta"
+      JWT_SECRET: "_secret_"
+
+#networks:
+#  sejutacita-network:
+#    name: sejutacita-network

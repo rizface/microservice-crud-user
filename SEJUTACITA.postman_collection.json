@@ -1,0 +1,1326 @@
+{
+	"info": {
+		"_postman_id": "e942c68b-0540-41ca-9912-e982e1470ff2",
+		"name": "SEJUTACITA",
+		"description": "Ini Adalah Resource Endpoint REST API Yang Bisa Digunakan Untuk Mengakses Microservices Yang Telah di Deploy Di Kubernetes Local.\n\n**Pastikan Untuk Membuat User Baru Terlebih Dahulu dan Mengganti Setiap Parameter userId dengan userId dari User Yang Ingin Dimanipulasi, Karena Setiap Aplikasi Restart Akan Melakukan Setup Database Baru dan Input Data Default Untuk Admin dan User**",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "AUTH",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://fariz.test.local/login",
+							"protocol": "http",
+							"host": [
+								"fariz",
+								"test",
+								"local"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "VALID",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"rahasia\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/login",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"status\": \"success\",\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg1N2JkYjNlLTYyZWQtNDMzMS1iMTJhLWU5M2YzYWEwZjIyOSIsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1hX2RlcGFuIjoiYWRtaW4iLCJuYW1hX2JlbGFrYW5nIjoiYWRtaW4gbGFnaSIsImxldmVsIjoiYWRtaW4iLCJpc3MiOiJ0ZXN0IHNlanV0YSBjaXRhIiwiZXhwIjoxNjQyNTg0MTM1fQ.MkD9qCCEdpflq8niIdPwGciA_DKkSSjFCw-2gmSYkPs\"\n    }\n}"
+						},
+						{
+							"name": "NOT FOUND",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"user ini tidak ada\",\n    \"password\": \"rahasia\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/login",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"code\": 404,\n    \"status\": \"akun tidak terdaftar\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "WRONG PASSWORD",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"password ini salah\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/login",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"username / password salah\",\n    \"data\": null\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoint Untuk Autentikasi Baik User Maupun Admin"
+		},
+		{
+			"name": "USER (ADMIN ONLY)",
+			"item": [
+				{
+					"name": "GET ALL USERS",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhjMTc3ODM5LWQ4OTItNDJjNC1iYzZjLTgxMDJlMDY0MzdlNiIsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1hX2RlcGFuIjoiYWRtaW4iLCJuYW1hX2JlbGFrYW5nIjoiYWRtaW4gbGFnaSIsImxldmVsIjoiYWRtaW4iLCJpc3MiOiJ0ZXN0IHNlanV0YSBjaXRhIiwiZXhwIjoxNjQyNjAwODk4fQ.C6b9WlsZbCOmlJonm8u_thWILn4a9PD5nhvoXaEYqJ0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://fariz.test.local/users",
+							"protocol": "http",
+							"host": [
+								"fariz",
+								"test",
+								"local"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "VALID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer IniTokenValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"status\": \"success\",\n    \"data\": {\n        \"users\": [\n            {\n                \"id\": \"857bdb3e-62ed-4331-b12a-e93f3aa0f229\",\n                \"username\": \"admin\",\n                \"nama_depan\": \"admin\",\n                \"nama_belakang\": \"admin lagi\",\n                \"level\": \"admin\"\n            },\n            {\n                \"id\": \"76f3b6fc-6e71-445b-ba1a-46969a4ceee5\",\n                \"username\": \"user\",\n                \"nama_depan\": \"user\",\n                \"nama_belakang\": \"user lagi\",\n                \"level\": \"user\"\n            }\n        ]\n    }\n}"
+						},
+						{
+							"name": "INVALID TOKEN",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer InitTidakValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"token kamu tidak valid\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "USE NOT ADMIN TOKEN",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer InitTidakValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"tidak punya akses ke fitur ini\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "ADD NEW USER",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhjMTc3ODM5LWQ4OTItNDJjNC1iYzZjLTgxMDJlMDY0MzdlNiIsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1hX2RlcGFuIjoiYWRtaW4iLCJuYW1hX2JlbGFrYW5nIjoiYWRtaW4gbGFnaSIsImxldmVsIjoiYWRtaW4iLCJpc3MiOiJ0ZXN0IHNlanV0YSBjaXRhIiwiZXhwIjoxNjQyNjAwODk4fQ.C6b9WlsZbCOmlJonm8u_thWILn4a9PD5nhvoXaEYqJ0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "conte",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"nama_depan\": \"admin\",\n    \"password\": \"admin\",\n    \"level\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://fariz.test.local/users",
+							"protocol": "http",
+							"host": [
+								"fariz",
+								"test",
+								"local"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "VALID WITHOUT nama_belakang",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniToken",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\":\"userBaru\",\n    \"nama_depan\": \"namaDepan\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"status\": \"success\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"ae962046-1e6c-4d5d-a7ac-1df739e00961\",\n            \"username\": \"userBaru\",\n            \"nama_depan\": \"namaDepan\",\n            \"nama_belakang\": \"\",\n            \"level\": \"user\"\n        }\n    }\n}"
+						},
+						{
+							"name": "VALID WITH nama_belakang",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniToken",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\":\"userBaru\",\n    \"nama_depan\": \"namaDepan\",\n    \"nama_belakang\": \"namaBelakang\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"status\": \"success\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"ae962046-1e6c-4d5d-a7ac-1df739e00961\",\n            \"username\": \"userBaru\",\n            \"nama_depan\": \"namaDepan\",\n            \"nama_belakang\": \"namaBelakang\",\n            \"level\": \"user\"\n        }\n    }\n}"
+						},
+						{
+							"name": "INVALID REQUEST",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniToken",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\":\"\",\n    \"nama_depan\": \"namaDepan\",\n    \"nama_belakang\": \"namaBelakang\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 400,\n    \"status\": \"Username is required\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "INVALID TOKEN",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniTokenTidakValid",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\":\"username\",\n    \"nama_depan\": \"namaDepan\",\n    \"nama_belakang\": \"namaBelakang\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"token kamu tidak valid\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "USE NOT ADMIN TOKEN",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniTokenTidakValid",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\":\"username\",\n    \"nama_depan\": \"namaDepan\",\n    \"nama_belakang\": \"namaBelakang\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"tidak punya akses ke fitur ini\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "UPDATE USER",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhjMTc3ODM5LWQ4OTItNDJjNC1iYzZjLTgxMDJlMDY0MzdlNiIsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1hX2RlcGFuIjoiYWRtaW4iLCJuYW1hX2JlbGFrYW5nIjoiYWRtaW4gbGFnaSIsImxldmVsIjoiYWRtaW4iLCJpc3MiOiJ0ZXN0IHNlanV0YSBjaXRhIiwiZXhwIjoxNjQyNjAwODk4fQ.C6b9WlsZbCOmlJonm8u_thWILn4a9PD5nhvoXaEYqJ0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "conte",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"SayauserBaru\",\n    \"nama_depan\": \"namaDepan\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://fariz.test.local/users/c5e840d0-ecfa-41ed-86b8-07ea7501d4a6",
+							"protocol": "http",
+							"host": [
+								"fariz",
+								"test",
+								"local"
+							],
+							"path": [
+								"users",
+								"c5e840d0-ecfa-41ed-86b8-07ea7501d4a6"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "VALID WITHOUT nama_belakang",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniToken",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"SayauserBaru\",\n    \"nama_depan\": \"namaDepan\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users/76f3b6fc-6e71-445b-ba1a-46969a4ceee5",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"76f3b6fc-6e71-445b-ba1a-46969a4ceee5"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"status\": \"data berhasil diupdate\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "VALID WITH nama_belakang",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniToken",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\":\"SayauserBaru\",\n    \"nama_depan\": \"namaDepan\",\n    \"nama_belakang\": \"namaBelakang\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users/76f3b6fc-6e71-445b-ba1a-46969a4ceee5",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"76f3b6fc-6e71-445b-ba1a-46969a4ceee5"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"status\": \"data berhasil diupdate\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "INVALID REQUEST",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniToken",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\":\"\",\n    \"nama_depan\": \"namaDepan\",\n    \"nama_belakang\": \"namaBelakang\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users/76f3b6fc-6e71-445b-ba1a-46969a4ceee5",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"76f3b6fc-6e71-445b-ba1a-46969a4ceee5"
+									]
+								}
+							},
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 400,\n    \"status\": \"Username is required\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "INVALID TOKEN",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniTokenTidakValid",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\":\"username\",\n    \"nama_depan\": \"namaDepan\",\n    \"nama_belakang\": \"namaBelakang\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users/76f3b6fc-6e71-445b-ba1a-46969a4ceee5",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"76f3b6fc-6e71-445b-ba1a-46969a4ceee5"
+									]
+								}
+							},
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"token kamu tidak valid\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "USE NOT ADMIN TOKEN",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer iniTokenTidakValid",
+										"type": "default"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\":\"username\",\n    \"nama_depan\": \"namaDepan\",\n    \"nama_belakang\": \"namaBelakang\",\n    \"password\": \"rahasia\",\n    \"level\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://fariz.test.local/users/76f3b6fc-6e71-445b-ba1a-46969a4ceee5",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"76f3b6fc-6e71-445b-ba1a-46969a4ceee5"
+									]
+								}
+							},
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"tidak punya akses ke fitur ini\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "DELETE USER",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhjMTc3ODM5LWQ4OTItNDJjNC1iYzZjLTgxMDJlMDY0MzdlNiIsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1hX2RlcGFuIjoiYWRtaW4iLCJuYW1hX2JlbGFrYW5nIjoiYWRtaW4gbGFnaSIsImxldmVsIjoiYWRtaW4iLCJpc3MiOiJ0ZXN0IHNlanV0YSBjaXRhIiwiZXhwIjoxNjQyNjAwODk4fQ.C6b9WlsZbCOmlJonm8u_thWILn4a9PD5nhvoXaEYqJ0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://fariz.test.local/users/c5e840d0-ecfa-41ed-86b8-07ea7501d4a6",
+							"protocol": "http",
+							"host": [
+								"fariz",
+								"test",
+								"local"
+							],
+							"path": [
+								"users",
+								"c5e840d0-ecfa-41ed-86b8-07ea7501d4a6"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "VALID",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer tokenIniValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users/iniIdUserValid",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"iniIdUserValid"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"status\": \"data berhasil dihapus\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "NOT FOUND",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer tokenIniValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users/idUserIniTidakAda",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"idUserIniTidakAda"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 404,\n    \"status\": \"data tidak ditemukan\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "TOKEN INVALID",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer tokenTidakValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users/idUserIniAda",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"idUserIniAda"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"token kamu tidak valid\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "USE NOT ADMIN TOKEN",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer tokenTidakValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users/idUserIniAda",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"idUserIniAda"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"tidak punya akses ke fitur ini\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "GET USER",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhjMTc3ODM5LWQ4OTItNDJjNC1iYzZjLTgxMDJlMDY0MzdlNiIsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1hX2RlcGFuIjoiYWRtaW4iLCJuYW1hX2JlbGFrYW5nIjoiYWRtaW4gbGFnaSIsImxldmVsIjoiYWRtaW4iLCJpc3MiOiJ0ZXN0IHNlanV0YSBjaXRhIiwiZXhwIjoxNjQyNjAwODk4fQ.C6b9WlsZbCOmlJonm8u_thWILn4a9PD5nhvoXaEYqJ0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://fariz.test.local/users/c5e840d0-ecfa-41ed-86b8-07ea7501d4a6",
+							"protocol": "http",
+							"host": [
+								"fariz",
+								"test",
+								"local"
+							],
+							"path": [
+								"users",
+								"c5e840d0-ecfa-41ed-86b8-07ea7501d4a6"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "VALID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "tokenIniValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users/16f4a49a-3c8a-4099-8804-e371623c5f4c",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"16f4a49a-3c8a-4099-8804-e371623c5f4c"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"status\": \"success\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"857bdb3e-62ed-4331-b12a-e93f3aa0f229\",\n            \"username\": \"admin\",\n            \"nama_depan\": \"admin\",\n            \"nama_belakang\": \"admin lagi\",\n            \"level\": \"admin\",\n            \"password\": \"$2a$10$GUI0m9Kf/mF5Tg/nsvEqOu7Lvj2j8xcIo9dscZOgxmL0BFTU5lnji\"\n        }\n    }\n}"
+						},
+						{
+							"name": "NOT FOUND",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "tokenIniValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users/ae962046-1e6c-4d5d-a7ac-1df739e00961",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"ae962046-1e6c-4d5d-a7ac-1df739e00961"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 404,\n    \"status\": \"data tidak ditemukan\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "TOKEN INVALID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "tokenIniTidakValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users/ae962046-1e6c-4d5d-a7ac-1df739e00961",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"ae962046-1e6c-4d5d-a7ac-1df739e00961"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"token kamu tidak valid\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "USE NOT ADMIN TOKEN",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "tokenIniTidakValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/users/ae962046-1e6c-4d5d-a7ac-1df739e00961",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"users",
+										"ae962046-1e6c-4d5d-a7ac-1df739e00961"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 401,\n    \"status\": \"tidak punya akses ke fitur ini\",\n    \"data\": null\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoint Untuk Manipulasi Data User",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI5OGI5MDRhLTdhNjUtNDIzZi1iYTQ0LTQzMmUxYWMzM2EzYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1hX2RlcGFuIjoiYWRtaW4iLCJuYW1hX2JlbGFrYW5nIjoiIiwibGV2ZWwiOiJ1c2VyIiwiaXNzIjoidGVzdCBzZWp1dGEgY2l0YSIsImV4cCI6MTY0MjYwMzYxOX0.wFcrQv9Xr_qlXajDJatdv-h07qlLmGQ0iE8I21BS7jE",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "PROFILE",
+			"item": [
+				{
+					"name": "PROFILE",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI5OGI5MDRhLTdhNjUtNDIzZi1iYTQ0LTQzMmUxYWMzM2EzYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1hX2RlcGFuIjoiYWRtaW4iLCJuYW1hX2JlbGFrYW5nIjoiIiwibGV2ZWwiOiJ1c2VyIiwiaXNzIjoidGVzdCBzZWp1dGEgY2l0YSIsImV4cCI6MTY0MjYwMzYxOX0.wFcrQv9Xr_qlXajDJatdv-h07qlLmGQ0iE8I21BS7jE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://fariz.test.local/profile",
+							"protocol": "http",
+							"host": [
+								"fariz",
+								"test",
+								"local"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "INVALID TOKEN",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "tokenIniTidakValid",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://fariz.test.local/profile",
+									"protocol": "http",
+									"host": [
+										"fariz",
+										"test",
+										"local"
+									],
+									"path": [
+										"profile"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"code\": 403,\n    \"status\": \"token kamu tidak valid\",\n    \"data\": null   \n}"
+						}
+					]
+				}
+			],
+			"description": "Get Data Profile Berdasarkan Token",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg1N2JkYjNlLTYyZWQtNDMzMS1iMTJhLWU5M2YzYWEwZjIyOSIsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1hX2RlcGFuIjoiYWRtaW4iLCJuYW1hX2JlbGFrYW5nIjoiYWRtaW4gbGFnaSIsImxldmVsIjoiYWRtaW4iLCJpc3MiOiJ0ZXN0IHNlanV0YSBjaXRhIiwiZXhwIjoxNjQyNTk2Njc2fQ.fa9VGgoXTvci0dvVRGqF6GkWSUxtbminzD1KQx9u45o",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}
